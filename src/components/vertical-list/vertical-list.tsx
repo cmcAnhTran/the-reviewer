@@ -1,22 +1,25 @@
 import React, { FC } from 'react';
-import PropTypes from 'prop-types';
-import ContentCard, { CardItem } from '../content-card/content-card';
+import ContentCard from '../content-card/content-card';
 import { List } from 'antd';
+import { ReviewListItem } from '../../models/review.model';
 
-export interface ItemsList {
+export interface ListItem<ReviewListItem> {
     take?: number,
-    items: CardItem[]
+    items: ReviewListItem[]
 }
 
-const VerticalList: FC<ItemsList> = ({ take, items }) => {
+const VerticalList: FC<ListItem<ReviewListItem>> = ({ take, items }) => {
     const displayedItems = take ? items.slice(0, take) : items;
     return (
         <List
         itemLayout="vertical"
         size="large"
         dataSource={displayedItems}
-        renderItem={(item) => (
+        renderItem={(item, i) => (
           <ContentCard
+            key={i}
+            id={item.id}
+            createdAt={item.createdAt}
             title={item.title}
             cover={item.cover}
             shortDescription={item.shortDescription}

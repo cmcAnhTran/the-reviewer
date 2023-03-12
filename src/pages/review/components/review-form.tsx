@@ -1,95 +1,104 @@
-import { Typography, Form, Input, Button, Upload } from "antd";
-import React, { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import { UploadOutlined } from '@ant-design/icons';
-
-
-interface Review {
-  title: string;
-  description: string;
-  content: string;
-}
+import { Image, Form, Input, Button, Upload, Space } from 'antd'
+import React, { useEffect, useState } from 'react'
+import ReactQuill from 'react-quill'
+import { ReviewDetail, ReviewRequest } from '../../../models/review.model'
+import { useNavigate } from 'react-router-dom'
+import './review-form.scss'
 
 interface ReviewFormProps {
-  data?: Review;
-  onReviewSubmit: (payload: Review) => void;
+  data?: ReviewDetail
+  onReviewSubmit: (payload: ReviewRequest) => void
 }
 
 const ReviewForm = (props: ReviewFormProps) => {
-  const [content, setContent] = useState("");
+  //TODO: Implement cover image upload
+  const navigate = useNavigate()
+  const [content, setContent] = useState('')
+  const [form] = Form.useForm<{ title: string; shortDescription: string }>()
+  const titleVal = Form.useWatch('title', form)
+  const descriptionVal = Form.useWatch('shortDescription', form)
+
   const modules = {
     toolbar: [
-      [{ header: "1" }, { header: "2" }, { font: [] }],
+      [{ header: '1' }, { header: '2' }, { font: [] }],
       [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
       [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
       ],
-      ["link", "image", "video"],
-      ["clean"],
+      ['link', 'image', 'video'],
+      ['clean'],
     ],
     clipboard: {
       // toggle to add extra line breaks when pasting HTML:
       matchVisual: false,
     },
-  };
+  }
   /*
    * Quill editor formats
    * See https://quilljs.com/docs/formats/
    */
   const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "video",
-  ];
-
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+    'video',
+  ]
 
   useEffect(() => {
     if (props.data?.content) {
-      setContent(props.data?.content);
+      setContent(props.data?.content)
     }
-  }, [props.data?.content]);
+  }, [props.data?.content])
 
-  const onFinish = (values: any) => {
-    const payload = {
-      title: values.title,
-      description: values.description,
+  const onSubmit = () => {
+    const payload: ReviewRequest = {
+      title: titleVal,
+      shortDescription: descriptionVal,
       content: content,
-    };
-    props.onReviewSubmit(payload);
-  };
+      authorId: 'test',
+      cover: '',
+      publish: true,
+    }
+    props.onReviewSubmit(payload)
+  }
+
+  const onSaveAsDraft = () => {
+    const payload: ReviewRequest = {
+      title: titleVal,
+      shortDescription: descriptionVal,
+      content: content,
+      authorId: 'test',
+      cover: '',
+      publish: false,
+    }
+    props.onReviewSubmit(payload)
+  }
 
   const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
-  };
+    console.log('Failed:', errorInfo)
+  }
   return (
     <div>
       <Form
+        form={form}
         name="review"
         initialValues={props.data}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
@@ -97,19 +106,8 @@ const ReviewForm = (props: ReviewFormProps) => {
           <Input />
         </Form.Item>
 
-        <Form.Item label="Short Description" name="description">
+        <Form.Item label="Short Description" name="shortDescription">
           <Input.TextArea />
-        </Form.Item>
-
-        <Form.Item
-          name="cover"
-          label="Cover"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <Upload name="logo" action="/upload.do" listType="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
-          </Upload>
         </Form.Item>
 
         <Form.Item style={{ height: 350 }} label="Content">
@@ -124,13 +122,19 @@ const ReviewForm = (props: ReviewFormProps) => {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" onClick={onSubmit}>
             Submit
+          </Button>
+          <Button type="default" onClick={onSaveAsDraft}>
+            Save As Draft
+          </Button>
+          <Button type="default" onClick={() => navigate(-1)} danger>
+            Cancel
           </Button>
         </Form.Item>
       </Form>
     </div>
-  );
-};
+  )
+}
 
-export default ReviewForm;
+export default ReviewForm

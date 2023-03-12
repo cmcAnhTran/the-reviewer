@@ -78,6 +78,15 @@ const Container = () => {
               </Link>
               ),
             },
+            {
+              key: "my-review",
+              icon: <VideoCameraOutlined />,
+              label: (
+                <Link to="/my-review">
+                <span>My Reviews</span>
+              </Link>
+              ),
+            },
           ]}
         />
       </Sider>
