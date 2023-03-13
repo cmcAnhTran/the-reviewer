@@ -1,7 +1,7 @@
 import { theme, Layout, Menu, Button } from "antd";
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -15,9 +15,69 @@ import {
 import Dashboard from "../dashboard/dashboard";
 import ReviewCreate from "../review/review-create";
 import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { path } from "../../constants/path";
+import { AppContext } from "../../context/app.context";
 
 const Container = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { isAuth, setIsAuth } = useContext(AppContext);
+  const handleLogout = () => {
+    setIsAuth(false);
+    localStorage.removeItem("isLogin");
+  };
+  const login = () => {
+    navigate({
+      pathname: "/login",
+    });
+  };
+  const MENU_SIDE_BAR = [
+    {
+      key: "dashboard",
+      icon: <UserOutlined />,
+      label: (
+        <Link to={path.dashboard}>
+          <span>Dashboard</span>
+        </Link>
+      ),
+    },
+    {
+      key: "create",
+      icon: <VideoCameraOutlined />,
+      label: (
+        <Link to="/create">
+          <span>Create Review</span>
+        </Link>
+      ),
+    },
+    {
+      key: "my-review",
+      icon: <VideoCameraOutlined />,
+      label: (
+        <Link to="/my-review">
+          <span>My Reviews</span>
+        </Link>
+      ),
+    },
+    {
+      key: "logout",
+      icon: <VideoCameraOutlined />,
+      label: <span onClick={handleLogout}>Logout</span>,
+    },
+    {
+      key: "login",
+      icon: <VideoCameraOutlined />,
+      label: <span onClick={login}>Login</span>,
+    },
+  ];
+  const sideBarItem = useMemo(() => {
+    if (!isAuth) {
+      return MENU_SIDE_BAR.filter(
+        (item) => !["create", "edit", "logout"].includes(item.key)
+      );
+    }
+    return MENU_SIDE_BAR.filter((item) => !["login"].includes(item.key));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuth]);
 
   const {
     token: { colorBgContainer },
@@ -41,55 +101,10 @@ const Container = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={["1"]}
-          items={[
-            {
-              key: "dashboard",
-              icon: <UserOutlined />,
-              label: (
-                <Link to="/dashboard">
-                <span>Dashboard</span>
-              </Link>
-              ),
-            },
-            {
-              key: "create",
-              icon: <VideoCameraOutlined />,
-              label: (
-                <Link to="/create">
-                <span>Create Review</span>
-              </Link>
-              ),
-            },
-            {
-              key: "edit",
-              icon: <VideoCameraOutlined />,
-              label: (
-                <Link to="/edit">
-                <span>Edit Review</span>
-              </Link>
-              ),
-            },
-            {
-              key: "sample-detail",
-              icon: <VideoCameraOutlined />,
-              label: (
-                <Link to="/sample-detail">
-                <span>Detail</span>
-              </Link>
-              ),
-            },
-            {
-              key: "my-review",
-              icon: <VideoCameraOutlined />,
-              label: (
-                <Link to="/my-review">
-                <span>My Reviews</span>
-              </Link>
-              ),
-            },
-          ]}
+          items={sideBarItem}
         />
       </Sider>
+
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
         <Content style={{ margin: "24px 16px 0", overflow: "auto" }}>
           <div
@@ -98,14 +113,6 @@ const Container = () => {
               background: colorBgContainer,
             }}
           >
-            {/* <Switch>
-              <Route path={path}>
-              <Dashboard />
-              </Route>
-              <Route path={`create-review`}>
-                <ReviewCreate />
-              </Route>
-            </Switch> */}
             <Outlet />
           </div>
         </Content>

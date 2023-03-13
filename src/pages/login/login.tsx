@@ -1,10 +1,45 @@
-import React from "react";
-import { Button, Card, Form, Input, Space, Typography } from "antd";
+import { Button, Card, Form, Input, Space } from "antd";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { path } from "../../constants/path";
+import { AppContext } from "../../context/app.context";
+import { SignupPayload } from "../../models/user.model";
 
 const Login = () => {
-    const { Link } = Typography;
+  const navigate = useNavigate();
+  const { setIsAuth } = useContext(AppContext);
   const onFinish = (values: any) => {
-    console.log("Success:", values);
+    const listAccounts = localStorage.getItem("account")
+      ? JSON.parse(localStorage.getItem("account") || "")
+      : [];
+
+    const isMatch = listAccounts.find((item: SignupPayload) => {
+      if (
+        item.username === values.username &&
+        item.password === values.password
+      ) {
+        return item;
+      }
+    });
+    if (!isMatch) {
+      toast.error("Username or Password wrong", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    localStorage.setItem("isLogin", values.username);
+    setIsAuth(true);
+    navigate({
+      pathname: path.dashboard,
+    });
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -14,8 +49,7 @@ const Login = () => {
     <Space
       direction="horizontal"
       align="center"
-      style={{ width: "100%", justifyContent: "center", height: "100vh"
-    }}
+      style={{ width: "100%", justifyContent: "center", height: "100vh" }}
     >
       <Card style={{ width: 500 }}>
         <Form
@@ -51,7 +85,7 @@ const Login = () => {
             </Button>
           </Form.Item>
         </Form>
-        <Link href="/signup">Didn't have an account? Sign up here!</Link>
+        <Link to={path.signup}>Didn't have an account? Sign up here!</Link>
       </Card>
     </Space>
   );

@@ -1,20 +1,10 @@
-import React from "react";
-import {
-  AutoComplete,
-  Button,
-  Card,
-  Cascader,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-  Space,
-  Typography,
-} from "antd";
-interface SignUpPayload {
+import { Button, Card, Form, Input, Space } from "antd";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { path } from "../../constants/path";
+import { AppContext } from "../../context/app.context";
+export interface SignUpPayload {
   username: string;
   password: string;
   confirm: string;
@@ -22,9 +12,56 @@ interface SignUpPayload {
 }
 
 const Signup = () => {
-    const { Link } = Typography;
+  const nagivate = useNavigate();
+  const { setIsAuth } = useContext(AppContext);
+
+  const handleRegister = (
+    listAccounts: SignUpPayload[],
+    value: SignUpPayload
+  ) => {
+    toast.success("Register success", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    listAccounts.push(value);
+    localStorage.setItem("isLogin", value.username);
+    localStorage.setItem("account", JSON.stringify(listAccounts));
+    setIsAuth(true);
+    nagivate({
+      pathname: path.dashboard,
+    });
+    return;
+  };
   const onFinish = (values: SignUpPayload) => {
     console.log("Success:", values);
+    const listAccounts = localStorage.getItem("account")
+      ? JSON.parse(localStorage.getItem("account") || "")
+      : [];
+    console.log("listAccounts", listAccounts);
+    if (!listAccounts) handleRegister(listAccounts, values);
+    const isMatch = listAccounts.find(
+      (item: SignUpPayload) => item.username === values.username
+    );
+    if (isMatch) {
+      toast.error("Username exist", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    handleRegister(listAccounts, values);
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -110,7 +147,7 @@ const Signup = () => {
             </Button>
           </Form.Item>
         </Form>
-        <Link href="/">Already had an account?</Link>
+        <Link to={path.login}>Already had an account?</Link>
       </Card>
     </Space>
   );

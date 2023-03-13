@@ -1,96 +1,107 @@
-import { Image, Form, Input, Button, Upload, Space } from 'antd'
-import React, { useEffect, useState } from 'react'
-import ReactQuill from 'react-quill'
-import { ReviewDetail, ReviewRequest } from '../../../models/review.model'
-import { useNavigate } from 'react-router-dom'
-import './review-form.scss'
+import { Image, Form, Input, Button, Upload, Space } from "antd";
+import React, { useEffect, useState } from "react";
+import ReactQuill from "react-quill";
+import { ReviewDetail, ReviewRequest } from "../../../models/review.model";
+import { useNavigate } from "react-router-dom";
+import "./review-form.scss";
 
 interface ReviewFormProps {
-  data?: ReviewDetail
-  onReviewSubmit: (payload: ReviewRequest) => void
+  data?: ReviewDetail;
+  onReviewSubmit: (
+    payload: ReviewRequest,
+    handleResetContent: () => void
+  ) => void;
 }
 
 const ReviewForm = (props: ReviewFormProps) => {
   //TODO: Implement cover image upload
-  const navigate = useNavigate()
-  const [content, setContent] = useState('')
-  const [form] = Form.useForm<{ title: string; shortDescription: string }>()
-  const titleVal = Form.useWatch('title', form)
-  const descriptionVal = Form.useWatch('shortDescription', form)
+  const navigate = useNavigate();
+  const [content, setContent] = useState("");
+  const [form] = Form.useForm<{ title: string; shortDescription: string }>();
+  const titleVal = Form.useWatch("title", form);
+  const descriptionVal = Form.useWatch("shortDescription", form);
 
   const modules = {
     toolbar: [
-      [{ header: '1' }, { header: '2' }, { font: [] }],
+      [{ header: "1" }, { header: "2" }, { font: [] }],
       [{ size: [] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      ["bold", "italic", "underline", "strike", "blockquote"],
       [
-        { list: 'ordered' },
-        { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
       ],
-      ['link', 'image', 'video'],
-      ['clean'],
+      ["link", "image", "video"],
+      ["clean"],
     ],
     clipboard: {
       // toggle to add extra line breaks when pasting HTML:
       matchVisual: false,
     },
-  }
+  };
   /*
    * Quill editor formats
    * See https://quilljs.com/docs/formats/
    */
+  const handleResetContent = () => {
+    setContent("");
+    form.resetFields();
+  };
   const formats = [
-    'header',
-    'font',
-    'size',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'indent',
-    'link',
-    'image',
-    'video',
-  ]
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+  ];
 
   useEffect(() => {
     if (props.data?.content) {
-      setContent(props.data?.content)
+      setContent(props.data?.content);
     }
-  }, [props.data?.content])
+  }, [props.data?.content]);
 
   const onSubmit = () => {
     const payload: ReviewRequest = {
       title: titleVal,
       shortDescription: descriptionVal,
       content: content,
-      authorId: 'test',
-      cover: '',
+      authorId: "test",
+      cover: "",
       publish: true,
-    }
-    props.onReviewSubmit(payload)
-  }
+    };
+    props.onReviewSubmit(payload, handleResetContent);
+  };
 
   const onSaveAsDraft = () => {
     const payload: ReviewRequest = {
       title: titleVal,
       shortDescription: descriptionVal,
       content: content,
-      authorId: 'test',
-      cover: '',
+      authorId: "test",
+      cover: "",
       publish: false,
-    }
-    props.onReviewSubmit(payload)
-  }
+    };
+    props.onReviewSubmit(payload, handleResetContent);
+  };
 
   const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo)
-  }
+    console.log("Failed:", errorInfo);
+  };
+  const onFinish = () => {
+    console.log("123");
+  };
+  console.log("form", form);
   return (
     <div>
       <Form
@@ -99,18 +110,27 @@ const ReviewForm = (props: ReviewFormProps) => {
         initialValues={props.data}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
+        onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
-        <Form.Item label="Title" name="title">
+        <Form.Item label="Title" name="title" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
 
-        <Form.Item label="Short Description" name="shortDescription">
-          <Input.TextArea />
+        <Form.Item
+          label="Short Description"
+          name="shortDescription"
+          rules={[{ required: true }]}
+        >
+          <Input />
         </Form.Item>
 
-        <Form.Item style={{ height: 350 }} label="Content">
+        <Form.Item
+          style={{ height: 350 }}
+          label="Content"
+          rules={[{ required: true, message: "Please input Detail!" }]}
+        >
           <ReactQuill
             style={{ height: 300 }}
             modules={modules}
@@ -134,7 +154,7 @@ const ReviewForm = (props: ReviewFormProps) => {
         </Form.Item>
       </Form>
     </div>
-  )
-}
+  );
+};
 
-export default ReviewForm
+export default ReviewForm;
