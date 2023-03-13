@@ -15,12 +15,26 @@ function MyReviews() {
     <div>
       <Title level={2}>My Reviews</Title>
       {/* <VerticalList items={data} /> */}
-      {reviews.map((item: ReviewRequestExtend) => (
-        <Card title={item.title} bordered={false} key={item.id}>
-          {item.shortDescription}
-          <div dangerouslySetInnerHTML={{ __html: item.content }} />
-        </Card>
-      ))}
+      {reviews.length ? (
+        reviews.map((item: ReviewRequestExtend) => (
+          <Card title={item.title} bordered={false} key={item.id}>
+            {item.shortDescription}
+            <div dangerouslySetInnerHTML={{ __html: item.content }} />
+          </Card>
+        ))
+      ) : (
+        <div
+          style={{
+            marginTop: "30px",
+            color: "#ccc",
+            fontSize: "18px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          There is no data
+        </div>
+      )}
     </div>
   );
 }

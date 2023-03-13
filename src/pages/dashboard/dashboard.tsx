@@ -63,13 +63,27 @@ const Dashboard = () => {
       <Button onClick={navigateToCreate} type="primary" size="large">
         Create your review!
       </Button>
-      <Divider orientation="left">My Reviews</Divider>
-      {reviews.map((item: ReviewRequestExtend) => (
-        <Card title={item.title} bordered={false} key={item.id}>
-          {item.shortDescription}
-          <div dangerouslySetInnerHTML={{ __html: item.content }} />
-        </Card>
-      ))}
+      {/* <Divider orientation="left">My Reviews</Divider> */}
+      {reviews.length ? (
+        reviews.map((item: ReviewRequestExtend) => (
+          <Card title={item.title} bordered={false} key={item.id}>
+            {item.shortDescription}
+            <div dangerouslySetInnerHTML={{ __html: item.content }} />
+          </Card>
+        ))
+      ) : (
+        <div
+          style={{
+            marginTop: "30px",
+            color: "#ccc",
+            fontSize: "18px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          There is no data
+        </div>
+      )}
     </div>
   );
 };

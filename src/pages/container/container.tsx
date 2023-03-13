@@ -17,6 +17,7 @@ import ReviewCreate from "../review/review-create";
 import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
 import { path } from "../../constants/path";
 import { AppContext } from "../../context/app.context";
+import { Logo } from "../../assets";
 
 const Container = () => {
   const navigate = useNavigate();
@@ -61,12 +62,20 @@ const Container = () => {
     {
       key: "logout",
       icon: <VideoCameraOutlined />,
-      label: <span onClick={handleLogout}>Logout</span>,
+      label: (
+        <span style={{ display: "block" }} onClick={handleLogout}>
+          Logout
+        </span>
+      ),
     },
     {
       key: "login",
       icon: <VideoCameraOutlined />,
-      label: <span onClick={login}>Login</span>,
+      label: (
+        <Link to={path.login}>
+          <span>Login</span>
+        </Link>
+      ),
     },
   ];
   const sideBarItem = useMemo(() => {
@@ -96,7 +105,17 @@ const Container = () => {
           bottom: 0,
         }}
       >
-        <div className="logo" />
+        <div className="logo">
+          <img
+            src={Logo}
+            alt=""
+            style={{
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+
         <Menu
           theme="dark"
           mode="inline"
@@ -106,11 +125,14 @@ const Container = () => {
       </Sider>
 
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
-        <Content style={{ margin: "24px 16px 0", overflow: "auto" }}>
+        <Content
+          style={{ margin: "24px 16px 0", overflow: "auto", minHeight: "90vh" }}
+        >
           <div
             style={{
               padding: 24,
               background: colorBgContainer,
+              minHeight: "100%",
             }}
           >
             <Outlet />
