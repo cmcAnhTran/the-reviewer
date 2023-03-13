@@ -32,9 +32,8 @@
 |   |--- models # Setup Interface for System
 |   |--- utils # Setup Axios,...
 |   |--- app.tsx
-|   |--- main.tsx
+|   |--- index.tsx
 |   |--- useRouteElement.tsx # Setup Router
-|   |--- index.scss # Setup global scss
 |
 |-- tsconfig.json # Config TS
 |
