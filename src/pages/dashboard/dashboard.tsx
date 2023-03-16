@@ -56,7 +56,7 @@ const Dashboard = () => {
   const navigateToCreate = () => {
     navigate({ pathname: "/create" });
   };
-  const reviews = store.getListReviews() || [];
+  const reviews = store.getListReviews().filter((item: any) => !item.isDraft) || [];
   return (
     <div>
       <Title level={2}>Dashboard</Title>

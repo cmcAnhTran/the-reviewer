@@ -186,7 +186,7 @@ const ReviewCreate = () => {
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" style={{marginRight: '10px'}}>
+            <Button type="primary" style={{marginRight: '10px'}} htmlType='submit'>
               Submit
             </Button>
             <Button type="default" style={{marginRight: '10px'}} onClick={() => onFinish(true)}>

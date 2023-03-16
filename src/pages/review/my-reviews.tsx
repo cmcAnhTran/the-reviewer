@@ -9,7 +9,7 @@ import store from "../../utils/Store";
 function MyReviews() {
   const { Title } = Typography;
   const data = reviewList;
-  const reviews = store.getMyReview() || [];
+  const reviews = store.getMyReview().filter((item: any) => !item.isDraft) || [];
 
   return (
     <div>
