@@ -3,7 +3,10 @@ import { ReviewRequestExtend } from "../models/review.model"
 class Store {
     constructor() { }
     getListReviews() {
-        return JSON.parse(localStorage.getItem('listReviews') || '[]').reverse()
+        if (localStorage.getItem("isLogin")?.length) {
+            return JSON.parse(localStorage.getItem('listReviews') || '[]').reverse()
+        }
+        return [];
     }
     addReview(review: ReviewRequestExtend) {
         const listReviews = this.getListReviews()
