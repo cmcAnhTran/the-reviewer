@@ -152,6 +152,7 @@ const ReviewCreate = () => {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           autoComplete="off"
+          onFinish={() => onFinish(false)}
         >
           <Form.Item
             label="Title"
@@ -185,10 +186,10 @@ const ReviewCreate = () => {
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" onClick={() => onFinish(false)}>
+            <Button type="primary" style={{marginRight: '10px'}}>
               Submit
             </Button>
-            <Button type="default" onClick={() => onFinish(true)}>
+            <Button type="default" style={{marginRight: '10px'}} onClick={() => onFinish(true)}>
               Save As Draft
             </Button>
             <Button
